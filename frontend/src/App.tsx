@@ -1,39 +1,39 @@
-import "./App.css";
-import RecipeCard from "./components/RecipeCard";
-import { AiOutlineSearch } from "react-icons/ai";
+import React, { useState, type FormEvent } from "react";
+import { searchRecipes } from "./API.ts";
+import { type Recipe } from './types';
 
 const App = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [searchTerm, setSearchTerm] = useState("");
+  const [recipes, setRecipes] = useState([]);
+
+  const handleSearchSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+
+    try {
+      const { results } = await searchRecipes(searchTerm, 1);
+      setRecipes(results);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
   return (
-    <div className="app-container">
-      <div className="header">
-        <img src="/hero-image.jpg"></img>
-        <div className="title">My Recipe App</div>
-      </div>
-      <div className="tabs">
-        <h1>Recipe Search</h1>
-        <h1>Favourites</h1>
-      </div>
-
-      <>
-        <form>
-          <input
-            type="text"
-            required
-            placeholder="Enter a search term ..."
-          ></input>
-          <button type="submit">
-            <AiOutlineSearch size={40} />
-          </button>
-        </form>
-
-        <div className="recipe-grid">
-          <RecipeCard />
+    <div>
+      <form onSubmit={handleSearchSubmit}>
+        <button type="submit">Submit</button>
+      </form>
+      {recipes.map((recipe: Recipe) => (
+        <div key={recipe.id}>
+          Recipe Image Location: {recipe.image}
+          <br />
+          Recipe Title: {recipe.title}
         </div>
-
-        <button className="view-more-button">View More</button>
-      </>
+      ))}
     </div>
   );
 };
 
 export default App;
+
+
